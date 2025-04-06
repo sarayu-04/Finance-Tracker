@@ -1,39 +1,42 @@
 import React, { useContext, useState } from "react";
 import axios from 'axios';
 
+
 const BASE_URL = "http://localhost:5000/api/v1/";
 
 const GlobalContext = React.createContext();
+
+
 
 export const GlobalProvider = ({ children }) => {
     const [incomes, setIncomes] = useState([]);
     const [Expenses, setExpenses] = useState([]);
     const [error, setError] = useState(null);
 
-    const addIncome = async (income) => {
-        try {
-            console.log("Sending income data:", income);  
-            const response = await axios.post(`${BASE_URL}add-income`, income);
-    
-            if (response && response.data) {
-                console.log("Income added successfully:", response.data); 
-                setIncomes([...incomes, response.data]);
-            } else {
-                console.error("Unexpected API response:", response);
-            }
-        } catch (err) {
-            console.error("API Error:", err.response?.data || err.message);
-            setError(err.response?.data?.message || "An error occurred");
-        }
-    };
+    const addIncome = async (income) => { 
+            const response = await axios.post(`${BASE_URL}add-income`, income)
+                .catch((err) =>{
+                    setError(err.response.data.message)
+            })
+    }
+
+    const getIncomes = async () => {
+        const response = await axios.get(`${BASE_URL}get-incomes`);
+        setIncomes(response.data)
+        console.log(response.data)
+    }
+
 
     return (
-        <GlobalContext.Provider value={{ addIncome }}>
+        <GlobalContext.Provider value={{
+            addIncome,
+            getIncomes,
+            incomes
+        }}>
             {children}
         </GlobalContext.Provider>
     );
 };
-
 export const useGlobalContext = () => {
     return useContext(GlobalContext);
 };
