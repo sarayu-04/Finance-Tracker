@@ -8,7 +8,7 @@ import {plus} from '../../utils/Icons'
 
 
 function Form() {
-    const {addIncome} = useGlobalContext()
+    const {addIncome, getIncomes} = useGlobalContext()
     const [inputState, setInputState] = useState({
         title: '',
         amount: '',
@@ -26,6 +26,13 @@ function Form() {
     const handleSubmit = e => {
         e.preventDefault()
         addIncome(inputState)
+        setInputState({
+            title: '',
+            amount: '',
+            date: '',
+            category: '',
+            description: '',
+        })
     }
 
     return(
